@@ -1,15 +1,19 @@
 ---
-- name: apache server installed
-  hosts: centos
+- hosts: linux
   become: yes
   tasks:
           - name: Latest apache version installed
-            yum:
+            dnf:
                     name: httpd
                     state: latest
+          - name: Latest mariadb install
+            dnf:
+                    name: mariadb-server
+                    state: latest
+                                            
           - name: Apache enabled and running
             service:
-                    name: httpd
+                    name: httpd mariadb
                     enabled: true
                     state: started
 

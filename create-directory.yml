@@ -1,0 +1,9 @@
+---
+- name: creating a directory
+  hosts: linux
+  tasks:
+          - name: Making a Directory
+            command: "mkdir /tmp/Ansible-Directory"
+  tasks:
+          - name: Create a file
+            command: "touch /tmp/Ansible-Directory/i-was-here.txt"

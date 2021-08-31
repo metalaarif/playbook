@@ -1,0 +1,8 @@
+---
+- name: Linux Server Updates
+  hosts: linux
+  tasks:
+          - name: Updating Servers
+            dnf:
+                    name: update_only
+                    update_only: yes

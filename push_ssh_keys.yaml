@@ -1,5 +1,5 @@
 ---
-- hosts: 192.168.21.3
+- hosts: linux
   gather_facts: false
   vars:
     ssh_key: '/root/.ssh/id_rsa.pub'

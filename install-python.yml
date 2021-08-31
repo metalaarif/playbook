@@ -1,0 +1,7 @@
+---
+- hosts: 192.168.21.9
+  tasks:
+          - name: Install Python on Oracle Linux
+            dnf:
+                    name: python3
+                    state: latest
