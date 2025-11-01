@@ -1,8 +1,45 @@
 ---
-- name: Linux Server Updates
-  hosts: linux
+- name: Update and upgrade Linux servers (Debian, RHEL, Arch, Alpine)
+  hosts: all
+  become: true
+  vars:
+    update_debian: "apt-get update -y && apt-get upgrade -y"
+    update_rhel: "dnf upgrade --refresh -y"
+    update_arch: "pacman -Syu --noconfirm"
+    update_alpine: "apk update && apk upgrade"
+
   tasks:
-          - name: Updating Servers
-            dnf:
-                    name: update_only
-                    update_only: yes
+    - name: Gather minimal facts for OS detection
+      ansible.builtin.setup:
+        gather_subset:
+          - '!all'
+          - 'min'
+
+    - name: Update Debian-based systems
+      ansible.builtin.shell: "{{ update_debian }}"
+      when: ansible_facts['os_family'] == "Debian"
+      tags: debian_update
+
+    - name: Update RHEL-based systems
+      ansible.builtin.shell: "{{ update_rhel }}"
+      when: ansible_facts['os_family'] == "RedHat"
+      tags: rhel_update
+
+    - name: Update Arch Linux systems
+      ansible.builtin.shell: "{{ update_arch }}"
+      when: ansible_facts['os_family'] == "Archlinux"
+      tags: arch_update
+
+    - name: Update Alpine Linux systems
+      ansible.builtin.shell: "{{ update_alpine }}"
+      when: ansible_facts['distribution'] == "Alpine"
+      tags: alpine_update
+
+    - name: Optional reboot after upgrade (if needed)
+      ansible.builtin.reboot:
+        msg: "Rebooting after system upgrade"
+        connect_timeout: 5
+        reboot_timeout: 600
+        test_command: whoami
+      when: ansible_facts['os_family'] in ["Debian", "RedHat", "Archlinux"] or ansible_facts['distribution'] == "Alpine"
+      tags: reboot
